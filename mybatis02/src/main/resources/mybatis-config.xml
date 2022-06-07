@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <properties resource="jdbc.properties"></properties>
+
+    <!-- 是否开启自动驼峰命名规则create_time createTime,默认是false -->
+    <settings>
+        <setting name="mapUnderscoreToCamelCase" value="true"></setting>
+    </settings>
+
+    <typeAliases>
+        <!-- 单个别名的设置 -->
+        <!-- <typeAlias type="com.tz.mybatis.entity.User" alias="user"/> -->
+        <!-- 批量设置别名 -->
+        <package name="com.tz.mybatis.entity"/>
+    </typeAliases>
+
+    <!-- 默认引用哪个数据库环境 -->
+    <environments default="productEnv">
+        <environment id="development">
+            <!-- 事务管理方式 -->
+            <transactionManager type="JDBC"/>
+            <!-- 数据库连接四要素 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+            </dataSource>
+        </environment>
+
+        <environment id="productEnv">
+            <!-- 事务管理方式 -->
+            <transactionManager type="JDBC"/>
+            <!-- 数据库连接四要素 -->
+            <dataSource type="POOLED">
+                <property name="driver" value="${jdbc.driver}"/>
+                <property name="url" value="${jdbc.url}"/>
+                <property name="username" value="${jdbc.username}"/>
+                <property name="password" value="${jdbc.password}"/>
+
+                <property name="poolMaximumActiveConnections" value="10"/>
+
+                <property name="poolMaximumIdleConnections" value="3"/>
+            </dataSource>
+        </environment>
+
+    </environments>
+    <!-- SQL的映射文件 -->
+    <mappers>
+        <!-- 第一种方式，用resource -->
+        <!-- <mapper resource="com/tz/mybatis/mapper/UserMapper.xml" /> -->
+        <!-- 第二种方式，用class -->
+        <!-- <mapper class="com.tz.mybatis.mapper.UserMapper" /> -->
+        <!-- 第三种方式， 用package -->
+        <package name="com.tz.mybatis.mapper"/>
+    </mappers>
+</configuration>

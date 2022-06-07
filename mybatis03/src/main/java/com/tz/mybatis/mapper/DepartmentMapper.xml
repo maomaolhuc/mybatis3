@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tz.mybatis.mapper.DepartmentMapper">
+
+	<resultMap type="department" id="adminDeptResultMap">
+		<!-- 主表的映射 department -->
+		<id column="dept_id" property="deptId" />
+		<result column="dept_name" property="deptName" />
+		<!-- 一对一关系的从表Admin association : 用于多对一，一对一，那个一的映射 property : Department对象里面新加的那个admin的属性名称 
+			javaType : 属性的类型 -->
+		<association property="admin" javaType="admin">
+			<id column="dept_id" property="deptId" />
+			<result column="name" property="name" />
+		</association>
+	</resultMap>
+
+
+	<!-- 一对一的查询 方式 二 -->
+	<select id="getDepartmentTypeTwo" resultMap="adminDeptResultMap">
+		select d.dept_id,
+		d.dept_name, a.name
+		from admin a inner join department d on
+		a.dept_id=d.dept_id
+	</select>
+
+
+	<!-- =========================下面是一对多 =================================== -->
+	<resultMap type="department" id="deptEmpResultMap">
+		<!-- 主表 -->
+		<id column="dept_id" property="deptId" />
+		<result column="dept_name" property="deptName" />
+		<!-- 从表,是一个集合，所以是collection，一对多，那个多的映射 
+		property : Department里的那个集合对象List<Employee> emps
+		ofType : 集合对象的属性的类型
+		-->
+		<collection property="emps" ofType="employee">
+			<id column="emp_id" property="empId" />
+			<result column="emp_name" property="empName" />
+		</collection>
+	</resultMap>
+	<!-- 一对多 -->
+	<select id="getDepartmentEmp" resultMap="deptEmpResultMap">
+		select d.dept_id,
+		d.dept_name, e.emp_id, e.emp_name
+		from department d inner join employee e on d.dept_id = e.dept_id 
+		where d.dept_id = #{deptId}
+	</select>
+	
+	
+	<!-- 方式 二 -->
+	<select id="getDepartmentEmpAll" resultType ="department" parameterType="int">
+		select d.dept_id,
+		d.dept_name, e.emp_id, e.emp_name
+		from department d inner join employee e on d.dept_id = e.dept_id 
+		where d.dept_id = #{deptId}
+	</select>
+
+</mapper>
