@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tz.sm.mapper.DepartmentMapper">
+
+    <!--
+            Cache的基本参数：
+            eviction : 缓存的回收策略。默认为LRU
+            LRU : 移除近期最少用的对象
+            FIFO ： first in first out 先进先出
+            SOFT : 软引用，移除基于垃圾回收状态和软件引用的对象
+            WEAK : 弱引用，更积极地移除基于垃圾回收状态和软件引用的对象
+
+            flushInterval ： 刷新缓存，单位毫秒，默认不自动刷新，可以为任意正整数，在增删改时也会刷新
+            size： 缓存对象的数目，默认是1024次查询结果
+            readOnly ： 只读，默认是false
+     -->
+    <cache eviction="LRU" flushInterval="60000" size="1024" readOnly="true"/>
+
+    <select id="getDepartmentById" parameterType="int" resultType="com.tz.sm.entity.Department">
+        select dept_id, dept_name
+        from department
+        where dept_id = #{deptId}
+    </select>
+
+    <!-- ================================================================ -->
+
+    <resultMap type="department" id="deptEmpsResultMap">
+        <id column="dept_id" property="deptId"/>
+        <result column="dept_name" property="deptName"/>
+        <collection property="emps" ofType="employee"
+                    select="com.tz.sm.mapper.EmployeeMapper.getEmpsByDeptIdLazyLoad"
+                    column="dept_id"/>
+    </resultMap>
+
+    <select id="getDeptById" parameterType="int" resultMap="deptEmpsResultMap" useCache="false">
+        select dept_id, dept_name
+        from department
+        where dept_id = #{deptId}
+    </select>
+
+</mapper>
